@@ -1,0 +1,24 @@
+{
+  "name": "Soviet Barracks",
+  "cost": 500,
+  "build_time": 1.0,
+  "size": [
+    2,
+    2
+  ],
+  "power_produced": 0,
+  "power_consumed": 20,
+  "color": [
+    0.7,
+    0.2,
+    0.2
+  ],
+  "requires": [
+    "tesla_reactor"
+  ],
+  "sight_radius": 15.0,
+  "health": 1000.0,
+  "role": "barracks",
+  "armor": "Wood",
+  "influence_radius": 4
+}

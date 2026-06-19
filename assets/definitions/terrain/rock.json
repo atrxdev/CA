@@ -1,0 +1,7 @@
+{
+  "name": "Rock",
+  "color": [0.32, 0.34, 0.34],
+  "passable": false,
+  "movement_cost": 1.0,
+  "buildable": false
+}

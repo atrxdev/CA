@@ -1,0 +1,24 @@
+{
+  "name": "GI",
+  "health": 300.0,
+  "speed": 3.0,
+  "cost": 200,
+  "build_time": 2.0,
+  "produced_by": [
+    "barracks"
+  ],
+  "weapon": {
+    "damage": 5.0,
+    "range": 3.0,
+    "cooldown": 0.1,
+    "warhead": "SA"
+  },
+  "color": [
+    0.8,
+    0.2,
+    0.2
+  ],
+  "sight_radius": 10.0,
+  "role": "infantry",
+  "armor": "None"
+}

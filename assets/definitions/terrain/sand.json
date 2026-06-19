@@ -1,0 +1,7 @@
+{
+  "name": "Sand",
+  "color": [0.76, 0.7, 0.5],
+  "passable": true,
+  "movement_cost": 1.15,
+  "buildable": true
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Grizzly Tank",
+  "health": 300.0,
+  "speed": 4.0,
+  "cost": 700,
+  "build_time": 6.0,
+  "produced_by": [
+    "war_factory"
+  ],
+  "weapon": {
+    "damage": 60.0,
+    "range": 5.0,
+    "cooldown": 1.0,
+    "warhead": "AP"
+  },
+  "color": [
+    0.7,
+    0.7,
+    0.2
+  ],
+  "sight_radius": 10.0,
+  "role": "tank",
+  "armor": "Light",
+  "model_path": "units/grizzly_tank.glb",
+  "model_scale": 0.2
+}

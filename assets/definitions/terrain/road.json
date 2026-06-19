@@ -1,0 +1,7 @@
+{
+  "name": "Road",
+  "color": [0.28, 0.28, 0.26],
+  "passable": true,
+  "movement_cost": 0.8,
+  "buildable": false
+}

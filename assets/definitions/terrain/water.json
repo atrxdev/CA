@@ -1,0 +1,7 @@
+{
+  "name": "Water",
+  "color": [0.08, 0.24, 0.5],
+  "passable": false,
+  "movement_cost": 1.0,
+  "buildable": false
+}

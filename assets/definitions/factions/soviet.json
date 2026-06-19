@@ -1,0 +1,15 @@
+{
+  "name": "Soviet",
+  "buildings": [
+    "soviet_construction_yard",
+    "tesla_reactor",
+    "soviet_refinery",
+    "soviet_barracks",
+    "soviet_war_factory"
+  ],
+  "units": [
+    "conscript",
+    "rhino_tank",
+    "war_miner"
+  ]
+}

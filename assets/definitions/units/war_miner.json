@@ -1,0 +1,24 @@
+{
+  "name": "War miner",
+  "health": 400.0,
+  "speed": 3.0,
+  "cost": 1200,
+  "build_time": 10.0,
+  "produced_by": [
+    "war_factory",
+    "soviet_war_factory"
+  ],
+  "weapon": {
+    "damage": 0.0,
+    "range": 0.0,
+    "cooldown": 1.0
+  },
+  "color": [
+    1.0,
+    0.5,
+    0.0
+  ],
+  "sight_radius": 10.0,
+  "role": "harvester",
+  "armor": "Medium"
+}

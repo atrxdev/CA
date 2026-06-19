@@ -1,0 +1,25 @@
+{
+  "name": "War Factory",
+  "cost": 2000,
+  "build_time": 20.0,
+  "size": [
+    3,
+    3
+  ],
+  "power_produced": 0,
+  "power_consumed": 50,
+  "color": [
+    0.6,
+    0.4,
+    0.2
+  ],
+  "requires": [
+    "power_plant",
+    "barracks"
+  ],
+  "sight_radius": 15.0,
+  "health": 2000.0,
+  "role": "war_factory",
+  "armor": "Wood",
+  "influence_radius": 4
+}

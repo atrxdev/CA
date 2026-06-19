@@ -1,0 +1,67 @@
+(
+    metadata: (
+        name: "Green Plains",
+        author: "Developer",
+        description: "A lush green battlefield with plenty of resources.",
+        recommended_players: 2,
+    ),
+    width: 128,
+    height: 128,
+    default_terrain: "grass",
+    starting_positions: [
+        (x: 32, y: 32),
+        (x: 96, y: 64),
+    ],
+    resource_nodes: [
+        (x: 70, y: 60, resource_id: "ore"),
+        (x: 70, y: 61, resource_id: "ore"),
+        (x: 70, y: 62, resource_id: "ore"),
+        (x: 70, y: 63, resource_id: "ore"),
+        (x: 70, y: 64, resource_id: "ore"),
+        (x: 70, y: 65, resource_id: "ore"),
+        (x: 70, y: 66, resource_id: "ore"),
+        (x: 70, y: 67, resource_id: "ore"),
+        (x: 70, y: 68, resource_id: "ore"),
+        (x: 70, y: 69, resource_id: "ore"),
+    ],
+    chunks: [
+        (
+            x: 1,
+            y: 1,
+            cells: [
+                (x: Some(16), y: Some(21), terrain: "water"),
+                (x: Some(17), y: Some(20), terrain: "water"),
+                (x: Some(17), y: Some(21), terrain: "water"),
+                (x: Some(17), y: Some(22), terrain: "water"),
+                (x: Some(18), y: Some(19), terrain: "water"),
+                (x: Some(18), y: Some(20), terrain: "water"),
+                (x: Some(18), y: Some(21), terrain: "water"),
+                (x: Some(18), y: Some(22), terrain: "water"),
+                (x: Some(18), y: Some(23), terrain: "water"),
+                (x: Some(19), y: Some(19), terrain: "water"),
+                (x: Some(19), y: Some(20), terrain: "water"),
+                (x: Some(19), y: Some(21), terrain: "water"),
+                (x: Some(19), y: Some(22), terrain: "water"),
+                (x: Some(20), y: Some(20), terrain: "water"),
+                (x: Some(20), y: Some(21), terrain: "water"),
+                (x: Some(20), y: Some(22), terrain: "water"),
+                (x: Some(21), y: Some(21), terrain: "water"),
+            ]
+        ),
+        (
+            x: 2,
+            y: 2,
+            cells: [
+                (x: Some(15), y: Some(0), terrain: "water"),
+                (x: Some(16), y: Some(0), terrain: "water"),
+                (x: Some(17), y: Some(0), terrain: "water"),
+                (x: Some(15), y: Some(1), terrain: "water"),
+                (x: Some(16), y: Some(1), terrain: "water"),
+                (x: Some(17), y: Some(1), terrain: "water"),
+                (x: Some(18), y: Some(1), terrain: "water"),
+                (x: Some(16), y: Some(2), terrain: "water"),
+                (x: Some(17), y: Some(2), terrain: "water"),
+            ]
+        )
+    ],
+)

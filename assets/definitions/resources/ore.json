@@ -1,0 +1,10 @@
+{
+    "name": "Ore",
+    "amount": 50000,
+    "color": [
+        1.0,
+        0.84,
+        0.0
+    ],
+    "model_path": "resources/gold.glb"
+}

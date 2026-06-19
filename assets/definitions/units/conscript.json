@@ -1,0 +1,24 @@
+{
+  "name": "Conscript",
+  "health": 100.0,
+  "speed": 5.0,
+  "cost": 100,
+  "build_time": 4.0,
+  "produced_by": [
+    "soviet_barracks"
+  ],
+  "weapon": {
+    "damage": 40.0,
+    "range": 5.0,
+    "cooldown": 1.0,
+    "warhead": "HE"
+  },
+  "color": [
+    0.6,
+    0.1,
+    0.1
+  ],
+  "sight_radius": 10.0,
+  "role": "infantry",
+  "armor": "Flak"
+}

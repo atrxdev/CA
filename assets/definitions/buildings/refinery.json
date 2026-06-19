@@ -1,0 +1,24 @@
+{
+  "name": "Refinery",
+  "cost": 2000,
+  "build_time": 5.0,
+  "size": [
+    3,
+    3
+  ],
+  "power_produced": 0,
+  "power_consumed": 40,
+  "color": [
+    0.5,
+    0.5,
+    0.5
+  ],
+  "requires": [
+    "power_plant"
+  ],
+  "sight_radius": 15.0,
+  "health": 1500.0,
+  "role": "refinery",
+  "armor": "Wood",
+  "influence_radius": 4
+}

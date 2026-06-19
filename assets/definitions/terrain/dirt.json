@@ -1,0 +1,7 @@
+{
+  "name": "Dirt",
+  "color": [0.4, 0.3, 0.2],
+  "passable": true,
+  "movement_cost": 1.0,
+  "buildable": true
+}

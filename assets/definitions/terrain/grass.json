@@ -1,0 +1,7 @@
+{
+  "name": "Grass",
+  "color": [0.2, 0.5, 0.2],
+  "passable": true,
+  "movement_cost": 1.0,
+  "buildable": true
+}

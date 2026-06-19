@@ -1,0 +1,24 @@
+{
+  "name": "Soviet War Factory",
+  "cost": 2000,
+  "build_time": 15.0,
+  "size": [
+    3,
+    3
+  ],
+  "power_produced": 0,
+  "power_consumed": 30,
+  "color": [
+    0.5,
+    0.2,
+    0.2
+  ],
+  "requires": [
+    "soviet_barracks"
+  ],
+  "sight_radius": 15.0,
+  "health": 2000.0,
+  "role": "war_factory",
+  "armor": "Wood",
+  "influence_radius": 4
+}

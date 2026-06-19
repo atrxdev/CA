@@ -1,0 +1,15 @@
+{
+  "name": "Alliance",
+  "buildings": [
+    "construction_yard",
+    "power_plant",
+    "refinery",
+    "barracks",
+    "war_factory"
+  ],
+  "units": [
+    "gi",
+    "grizzly_tank",
+    "chrono_miner"
+  ]
+}

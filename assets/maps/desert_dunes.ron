@@ -1,0 +1,38 @@
+(
+    metadata: (
+        name: "Desert Dunes",
+        author: "Developer",
+        description: "A barren wasteland with scarce resources.",
+        recommended_players: 4,
+    ),
+    width: 128,
+    height: 128,
+    default_terrain: "sand",
+    starting_positions: [
+        (x: 32, y: 64),
+        (x: 96, y: 64),
+        (x: 64, y: 32),
+        (x: 64, y: 96),
+    ],
+    resource_nodes: [
+        (x: 50, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 51, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 52, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 53, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 54, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 55, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 56, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 57, y: 70, resource_id: "ore", amount: Some(5000)),
+        (x: 58, y: 70, resource_id: "ore", amount: Some(50000)),
+        (x: 59, y: 70, resource_id: "ore", amount: Some(50000)),
+    ],
+    chunks: [
+        (
+            x: 0,
+            y: 0,
+            cells: [
+                (terrain: "sand")
+            ]
+        )
+    ],
+)
