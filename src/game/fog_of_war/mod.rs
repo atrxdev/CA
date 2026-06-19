@@ -17,7 +17,11 @@ impl Plugin for FogOfWarPlugin {
                 update_fog_of_war,
                 update_entity_visibility_in_fog.after(update_fog_of_war),
             )
-                .run_if(in_state(AppState::InGame)),
+                .run_if(in_state(AppState::InGame))
+                .run_if(resource_exists::<FogOfWar>)
+                .run_if(resource_exists::<FogUpdateTimer>)
+                .run_if(resource_exists::<FogTexture>)
+                .run_if(resource_exists::<FogMaterial>),
         );
     }
 }

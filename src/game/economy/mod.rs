@@ -140,7 +140,7 @@ fn harvester_logic(
 
                         if ore.amount == 0 {
                             if let Ok(mut cmds) = commands.get_entity(ore_entity) {
-                                cmds.despawn();
+                                cmds.try_despawn();
                             }
                         }
 

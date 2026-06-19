@@ -19,7 +19,8 @@ impl Plugin for ConsolePlugin {
             .add_systems(
                 Update,
                 (toggle_console, handle_console_input, update_console_ui)
-                    .run_if(in_state(AppState::InGame)),
+                    .run_if(in_state(AppState::InGame))
+                    .run_if(resource_exists::<FogOfWar>),
             );
     }
 }
@@ -357,7 +358,7 @@ fn execute_command(
         "kill" => {
             let mut count = 0;
             for entity in q_selected.iter() {
-                commands.entity(entity).despawn();
+                commands.entity(entity).try_despawn();
                 count += 1;
             }
             if count > 0 {
@@ -370,7 +371,7 @@ fn execute_command(
             let mut count = 0;
             for (entity, owner) in q_units.iter() {
                 if owner.0 != local_player.0 {
-                    commands.entity(entity).despawn();
+                    commands.entity(entity).try_despawn();
                     count += 1;
                 }
             }

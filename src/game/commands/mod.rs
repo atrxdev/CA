@@ -767,7 +767,7 @@ fn handle_sell_building_commands(
 
                 // Despawn building
                 if let Ok(mut cmds) = commands.get_entity(cmd.building_entity) {
-                    cmds.despawn();
+                    cmds.try_despawn();
                 }
             }
         }

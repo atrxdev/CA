@@ -340,7 +340,7 @@ fn projectile_movement(
                     target_building.health -= projectile.damage * modifier;
                 }
                 if let Ok(mut cmds) = commands.get_entity(proj_entity) {
-                    cmds.despawn();
+                    cmds.try_despawn();
                 }
             } else {
                 let move_vec = direction.normalize() * move_dist;
@@ -349,7 +349,7 @@ fn projectile_movement(
         } else {
             // Target dead mid-flight
             if let Ok(mut cmds) = commands.get_entity(proj_entity) {
-                cmds.despawn();
+                cmds.try_despawn();
             }
         }
     }
@@ -368,7 +368,7 @@ fn health_logic(
         if unit.health <= 0.0 {
             // Die
             if let Ok(mut cmds) = commands.get_entity(entity) {
-                cmds.despawn();
+                cmds.try_despawn();
             }
 
             commands.spawn((
@@ -405,7 +405,7 @@ fn health_logic(
 
             // Die
             if let Ok(mut cmds) = commands.get_entity(entity) {
-                cmds.despawn();
+                cmds.try_despawn();
             }
 
             commands.spawn((
@@ -428,7 +428,7 @@ fn explosion_logic(
         explosion.timer += time.delta_secs();
         if explosion.timer >= explosion.max_time {
             if let Ok(mut cmds) = commands.get_entity(entity) {
-                cmds.despawn();
+                cmds.try_despawn();
             }
         } else {
             let scale = 1.0 + (explosion.timer / explosion.max_time) * 2.0;

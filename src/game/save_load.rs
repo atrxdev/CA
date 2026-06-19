@@ -26,7 +26,12 @@ impl Plugin for SaveLoadPlugin {
                 Update,
                 keyboard_trigger_save_load.run_if(in_state(AppState::InGame)),
             )
-            .add_systems(Update, save_game_system.run_if(in_state(AppState::InGame)))
+            .add_systems(
+                Update,
+                save_game_system
+                    .run_if(in_state(AppState::InGame))
+                    .run_if(resource_exists::<FogOfWar>),
+            )
             .add_systems(Update, load_game_system.run_if(in_state(AppState::InGame)));
     }
 }
@@ -498,13 +503,14 @@ fn save_game_system(
 
 fn load_game_system(
     mut load_events: MessageReader<LoadRequest>,
+    mut load_pending: Local<bool>,
     mut commands: Commands,
     definitions: Res<Definitions>,
     mut players: ResMut<crate::game::player::Players>,
 
     mut power_system: ResMut<PowerSystem>,
     mut team_queues: ResMut<TeamBuildingQueues>,
-    mut fog_of_war: ResMut<FogOfWar>,
+    fog_of_war: Option<ResMut<FogOfWar>>,
     mut grid: ResMut<Grid>,
     mut q_camera: Query<&mut Transform, With<crate::game::camera::RtsCamera>>,
     // Combined Despawn query to stay under Bevy's 16 system parameters limit
@@ -519,9 +525,17 @@ fn load_game_system(
         )>,
     >,
 ) {
-    if load_events.read().next().is_none() {
+    if load_events.read().next().is_some() {
+        *load_pending = true;
+    }
+    if !*load_pending {
         return;
     }
+    let Some(mut fog_of_war) = fog_of_war else {
+        return;
+    };
+
+    *load_pending = false;
 
     let save_path = StdPath::new("data/saves/save.json");
     if !save_path.exists() {
@@ -549,7 +563,7 @@ fn load_game_system(
 
     // 1. Despawn existing gameplay entities
     for entity in q_despawn.iter() {
-        commands.entity(entity).despawn();
+        commands.entity(entity).try_despawn();
     }
 
     // 2. Restore resources

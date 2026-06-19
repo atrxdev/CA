@@ -190,10 +190,10 @@ fn cleanup_main_menu(
     q_camera: Query<Entity, With<MainMenuCamera>>,
 ) {
     for entity in q_menu.iter() {
-        commands.entity(entity).despawn();
+        commands.entity(entity).try_despawn();
     }
     for entity in q_camera.iter() {
-        commands.entity(entity).despawn();
+        commands.entity(entity).try_despawn();
     }
 }
 
@@ -595,10 +595,10 @@ fn cleanup_faction_selection(
     q_camera: Query<Entity, With<MainMenuCamera>>,
 ) {
     for entity in q_menu.iter() {
-        commands.entity(entity).despawn();
+        commands.entity(entity).try_despawn();
     }
     for entity in q_camera.iter() {
-        commands.entity(entity).despawn();
+        commands.entity(entity).try_despawn();
     }
 }
 
@@ -766,7 +766,7 @@ fn update_player_slots_ui(
 
     if let Some(children) = children {
         for child in children.iter() {
-            commands.entity(child).despawn();
+            commands.entity(child).try_despawn();
         }
     }
 

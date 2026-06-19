@@ -270,7 +270,7 @@ fn update_minimap_pips(
                 && q_buildings.get(pip.target).is_err()
                 && q_ore.get(pip.target).is_err()
             {
-                commands.entity(pip_entity).despawn();
+                commands.entity(pip_entity).try_despawn();
             } else {
                 node.display = Display::None;
                 existing.insert(pip.target);

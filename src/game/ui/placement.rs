@@ -71,8 +71,6 @@ fn handle_placement_input(
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     minimap_interaction: Option<Res<crate::game::ui::minimap::MinimapInteractionState>>,
     mut state: ResMut<PlacementState>,
-    mut commands: Commands,
-    q_ghost: Query<Entity, With<PlacementGhost>>,
     _definitions: Res<Definitions>,
     _players: Res<Players>,
     _local_player: Res<LocalPlayer>,
@@ -84,7 +82,6 @@ fn handle_placement_input(
         }
     }
 
-    let mut changed = false;
     let cursor_over_minimap = minimap_interaction
         .as_deref()
         .is_some_and(|state| state.cursor_over || state.active);
@@ -92,13 +89,6 @@ fn handle_placement_input(
         || (!cursor_over_minimap && mouse_buttons.just_pressed(MouseButton::Right))
     {
         state.active = false;
-        changed = true;
-    }
-
-    if changed && !state.active {
-        for entity in q_ghost.iter() {
-            commands.entity(entity).despawn();
-        }
     }
 }
 
@@ -133,7 +123,7 @@ fn update_placement_ghost(
 ) {
     if !state.active {
         for (entity, _, _) in q_ghost.iter() {
-            commands.entity(entity).despawn();
+            commands.entity(entity).try_despawn();
         }
         return;
     }
@@ -142,7 +132,7 @@ fn update_placement_ghost(
         .is_some_and(|state| state.cursor_over || state.active)
     {
         for (entity, _, _) in q_ghost.iter() {
-            commands.entity(entity).despawn();
+            commands.entity(entity).try_despawn();
         }
         return;
     }
@@ -288,12 +278,10 @@ fn update_placement_ghost(
 }
 
 fn handle_placement_click(
-    mut commands: Commands,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     minimap_interaction: Option<Res<crate::game::ui::minimap::MinimapInteractionState>>,
     mut state: ResMut<PlacementState>,
     q_ghost: Query<(&Transform, &MeshMaterial3d<StandardMaterial>), With<PlacementGhost>>,
-    q_ghost_entities: Query<Entity, With<PlacementGhost>>,
     mut place_building_events: MessageWriter<PlaceBuildingCommand>,
     q_window: Query<&Window>,
     ghost_assets: Res<GhostAssets>,
@@ -335,7 +323,4 @@ fn handle_placement_click(
     });
 
     state.active = false;
-    for entity in q_ghost_entities.iter() {
-        commands.entity(entity).despawn();
-    }
 }
