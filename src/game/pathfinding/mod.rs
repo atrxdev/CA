@@ -267,10 +267,45 @@ pub fn find_path(start: Vec2, end: Vec2, grid: &Grid) -> Option<Vec<Vec2>> {
             current = came_from[&current];
         }
         path.reverse();
-        Some(path)
+        Some(simplify_collinear_path(start_pos, path))
     } else {
         None
     }
+}
+
+/// Removes intermediate cells along straight path segments. Keeping every A*
+/// cell as a waypoint makes units brake and turn once per tile, which becomes
+/// especially visible when a large formation moves together.
+fn simplify_collinear_path(start: (i32, i32), path: Vec<Vec2>) -> Vec<Vec2> {
+    if path.len() < 2 {
+        return path;
+    }
+
+    let mut simplified = Vec::with_capacity(path.len());
+    let mut previous = start;
+
+    for index in 0..path.len() {
+        let current = (path[index].x as i32, path[index].y as i32);
+        let current_direction = (
+            (current.0 - previous.0).signum(),
+            (current.1 - previous.1).signum(),
+        );
+        let is_last = index + 1 == path.len();
+
+        if is_last {
+            simplified.push(path[index]);
+            break;
+        }
+
+        let next = (path[index + 1].x as i32, path[index + 1].y as i32);
+        let next_direction = ((next.0 - current.0).signum(), (next.1 - current.1).signum());
+        if current_direction != next_direction {
+            simplified.push(path[index]);
+        }
+        previous = current;
+    }
+
+    simplified
 }
 
 #[cfg(test)]
@@ -286,5 +321,28 @@ mod tests {
             nearest_available_destination(Vec2::new(7.0, 10.0), Vec2::new(10.0, 10.0), &grid);
 
         assert_eq!(destination, Some(Vec2::new(9.0, 10.0)));
+    }
+
+    #[test]
+    fn straight_paths_only_keep_the_destination() {
+        let grid = Grid::new(32, 32, 32, 32);
+        let path = find_path(Vec2::new(2.0, 2.0), Vec2::new(10.0, 2.0), &grid).unwrap();
+
+        assert_eq!(path, vec![Vec2::new(10.0, 2.0)]);
+    }
+
+    #[test]
+    fn path_keeps_only_actual_turns() {
+        let simplified = simplify_collinear_path(
+            (0, 0),
+            vec![
+                Vec2::new(1.0, 0.0),
+                Vec2::new(2.0, 0.0),
+                Vec2::new(2.0, 1.0),
+                Vec2::new(2.0, 2.0),
+            ],
+        );
+
+        assert_eq!(simplified, vec![Vec2::new(2.0, 0.0), Vec2::new(2.0, 2.0)]);
     }
 }

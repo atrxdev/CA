@@ -227,7 +227,7 @@ fn assign_group_move_slots(
             .collect();
     }
 
-    let mut available_slots = formation_slots_near_target(target_pos, group_units.len(), grid);
+    let available_slots = formation_slots_near_target(target_pos, group_units.len(), grid);
     if available_slots.is_empty() {
         return group_units
             .iter()
@@ -235,31 +235,36 @@ fn assign_group_move_slots(
             .collect();
     }
 
-    let mut units: Vec<(Entity, Vec2)> = group_units.to_vec();
-    units.sort_by(|(_, a), (_, b)| {
-        a.distance_squared(target_pos)
-            .partial_cmp(&b.distance_squared(target_pos))
-            .unwrap_or(std::cmp::Ordering::Equal)
-    });
+    // Choose the shortest currently available unit/slot pair globally. This
+    // preserves the group's rough spatial ordering and creates far fewer paths
+    // crossing through the middle of a large formation than unit-by-unit greed.
+    let mut candidates = Vec::with_capacity(group_units.len() * available_slots.len());
+    for (unit_index, (_, unit_pos)) in group_units.iter().enumerate() {
+        for (slot_index, slot) in available_slots.iter().enumerate() {
+            candidates.push((unit_pos.distance_squared(*slot), unit_index, slot_index));
+        }
+    }
+    candidates.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
 
-    let mut assignments = Vec::with_capacity(units.len());
-    for (entity, unit_pos) in units {
-        if available_slots.is_empty() {
-            assignments.push((entity, target_pos));
+    let mut assigned_units = vec![false; group_units.len()];
+    let mut assigned_slots = vec![false; available_slots.len()];
+    let mut assignments = Vec::with_capacity(group_units.len());
+    for (_, unit_index, slot_index) in candidates {
+        if assigned_units[unit_index] || assigned_slots[slot_index] {
             continue;
         }
-
-        let mut best_slot = 0;
-        let mut best_dist = f32::MAX;
-        for (idx, slot) in available_slots.iter().enumerate() {
-            let dist = unit_pos.distance_squared(*slot);
-            if dist < best_dist {
-                best_dist = dist;
-                best_slot = idx;
-            }
+        assigned_units[unit_index] = true;
+        assigned_slots[slot_index] = true;
+        assignments.push((group_units[unit_index].0, available_slots[slot_index]));
+        if assignments.len() == group_units.len().min(available_slots.len()) {
+            break;
         }
+    }
 
-        assignments.push((entity, available_slots.remove(best_slot)));
+    for (unit_index, (entity, _)) in group_units.iter().enumerate() {
+        if !assigned_units[unit_index] {
+            assignments.push((*entity, target_pos));
+        }
     }
 
     assignments

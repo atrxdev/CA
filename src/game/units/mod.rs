@@ -30,7 +30,7 @@ impl Plugin for UnitsPlugin {
                     move_units,
                     resolve_unit_collisions.after(move_units),
                     resolve_obstacle_collisions_system.after(resolve_unit_collisions),
-                    cancel_stuck_unit_moves.after(resolve_obstacle_collisions_system),
+                    track_stuck_unit_moves.after(resolve_obstacle_collisions_system),
                 )
                     .run_if(in_state(AppState::InGame)),
             );
@@ -251,6 +251,7 @@ fn move_units(
     time: Res<Time>,
     grid: Res<Grid>,
     mut repath_cooldowns: ResMut<MovementRepathCooldowns>,
+    stuck_tracking: Res<MovementStuckTracking>,
 ) {
     const DYNAMIC_REPATH_COOLDOWN: f32 = 0.3;
     let dt = time.delta_secs();
@@ -324,11 +325,16 @@ fn move_units(
         }
 
         let desired_move_dir = Vec3::new(direction.x, 0.0, direction.z).normalize();
+        let is_stalled = stuck_tracking
+            .0
+            .get(&entity)
+            .is_some_and(|progress| progress.stalled_for >= 0.6);
         let move_dir = steer_around_units(
             entity,
             transform.translation,
             desired_move_dir,
             &unit_positions,
+            is_stalled,
         );
 
         // Turn towards movement direction
@@ -366,6 +372,7 @@ fn steer_around_units(
     position: Vec3,
     desired_move_dir: Vec3,
     unit_positions: &[(Entity, Vec3, bool)],
+    is_stalled: bool,
 ) -> Vec3 {
     let mut avoidance = Vec3::ZERO;
     let awareness_radius = 1.6;
@@ -393,12 +400,36 @@ fn steer_around_units(
         let lateral = side * side_sign;
         let separation = -to_other;
         let proximity = 1.0 - (distance / awareness_radius);
+
+        // Once progress stalls, consider neighbors on every side. The regular
+        // forward-looking steering can cancel out perfectly when a unit is
+        // pinched between two others.
+        if is_stalled {
+            avoidance += separation * proximity * 0.9;
+        }
+
         let blocker_weight = if other_has_path { 0.45 } else { 0.9 };
         let ahead_weight = ((ahead + 0.15) / 1.15).clamp(0.0, 1.0);
 
         avoidance += (lateral * 0.7 + separation * 0.3) * proximity * ahead_weight * blocker_weight;
     }
 
+    if is_stalled && avoidance.length_squared() < 0.04 {
+        // Break a symmetrical deadlock consistently so adjacent units do not
+        // choose a new side every frame and oscillate.
+        let side = desired_move_dir.cross(Vec3::Y).normalize_or_zero();
+        let sign = if entity.index().index() % 2 == 0 {
+            1.0
+        } else {
+            -1.0
+        };
+        avoidance += side * sign * 0.8;
+    }
+
+    // Dense groups can have many neighbors inside the awareness radius. Keep
+    // normal avoidance subordinate to the order, but allow a stalled unit a
+    // stronger escape vector for a short time.
+    let avoidance = avoidance.clamp_length_max(if is_stalled { 1.1 } else { 0.75 });
     let steered_dir = desired_move_dir + avoidance;
     if steered_dir.length_squared() > 0.001 {
         steered_dir.normalize()
@@ -458,10 +489,11 @@ fn resolve_unit_collisions(
                         (push, -push)
                     }
                     (true, false) => {
-                        // Moving unit yields to idle unit
-                        (push_dir * overlap, Vec3::ZERO)
+                        // Idle units yield a little so a moving unit cannot be
+                        // permanently pinned inside a stationary crowd.
+                        (push_dir * (overlap * 0.7), -push_dir * (overlap * 0.3))
                     }
-                    (false, true) => (Vec3::ZERO, -push_dir * overlap),
+                    (false, true) => (push_dir * (overlap * 0.3), -push_dir * (overlap * 0.7)),
                     (false, false) => {
                         let push = push_dir * (overlap * 0.5);
                         (push, -push)
@@ -483,8 +515,7 @@ fn resolve_unit_collisions(
     }
 }
 
-fn cancel_stuck_unit_moves(
-    mut commands: Commands,
+fn track_stuck_unit_moves(
     q_units: Query<(Entity, &Transform, Option<&Path>), With<Unit>>,
     time: Res<Time>,
     mut tracking: ResMut<MovementStuckTracking>,
@@ -546,7 +577,7 @@ fn cancel_stuck_unit_moves(
         .0
         .retain(|entity, _| moving_units.iter().any(|(moving, _, _)| moving == entity));
 
-    let mut cancel = Vec::new();
+    let mut temporarily_blocked = Vec::new();
     for &(entity, position, stalled_for) in &moving_units {
         if stalled_for < STUCK_DURATION {
             continue;
@@ -558,15 +589,19 @@ fn cancel_stuck_unit_moves(
                     <= UNIT_CONTACT_DISTANCE * UNIT_CONTACT_DISTANCE
         });
         if trapped_by_unit {
-            cancel.push(entity);
+            temporarily_blocked.push(entity);
         }
     }
 
-    cancel.sort_unstable();
-    cancel.dedup();
-    for entity in cancel {
-        commands.entity(entity).try_remove::<Path>();
-        tracking.0.remove(&entity);
+    // A traffic jam is not a cancelled order. Let avoidance and collision
+    // resolution keep working instead of silently abandoning group members.
+    // Reset the timer so a persistent obstruction is checked again later.
+    temporarily_blocked.sort_unstable();
+    temporarily_blocked.dedup();
+    for entity in temporarily_blocked {
+        if let Some(progress) = tracking.0.get_mut(&entity) {
+            progress.stalled_for = 0.0;
+        }
     }
 }
 
